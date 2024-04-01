@@ -25,7 +25,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>org.example.Lox</mainClass> <!-- Specify your main class here -->
+                            <mainClass>org.example.lox.Lox</mainClass> <!-- Specify your main class here -->
                         </manifest>
                     </archive>
                 </configuration>
