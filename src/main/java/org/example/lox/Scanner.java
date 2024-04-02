@@ -15,6 +15,7 @@ public class Scanner {
     private int line = 1;
     private static final Map<String, TokenType> keywords;
 
+    //static initializer
     static {
         keywords = new HashMap<>();
         keywords.put("and",    AND);
@@ -81,7 +82,11 @@ public class Scanner {
             case '/':
                 if (match('/')) {
                     // A comment goes until the end of the line.
-                    while (peek() != '\n' && !isAtEnd()) advance();
+                    while (peek() != '\n' && !isAtEnd()) {
+                        advance();
+                    }
+                } else if (match('*')) {
+                    blockComment();
                 } else {
                     addToken(SLASH);
                 }
@@ -115,12 +120,40 @@ public class Scanner {
         }
     }
 
+    private void blockComment() {
+        int nesting = 1;
+        while (nesting > 0 && !isAtEnd()) {
+            if (peek() == '*' && peekNext() == '/') {
+                advance();
+                advance();
+                nesting--;
+            } else if (peek() == '/' && peekNext() == '*') {
+                advance();
+                advance();
+                nesting++;
+            } else {
+                if (peek() == '\n') {
+                    line++;
+                }
+                advance();
+            }
+        }
+
+        if (nesting > 0) {
+            Lox.error(line, "Unterminated block comment.");
+        }
+    }
+
     private boolean isAlpha(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
     }
 
     private boolean isAlphaNumeric(char c) {
         return isAlpha(c) || isDigit(c);
+    }
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
     }
 
     private void identifier() {
@@ -137,7 +170,9 @@ public class Scanner {
     }
 
     private void number() {
-        while (isDigit(peek())) advance();
+        while (isDigit(peek())) {
+            advance();
+        }
 
         // Look for a fractional part.
         if (peek() == '.' && isDigit(peekNext())) {
@@ -156,10 +191,6 @@ public class Scanner {
             return '\0';
         }
         return source.charAt(current + 1);
-    }
-
-    private boolean isDigit(char c) {
-        return c >= '0' && c <= '9';
     }
 
     private void string() {
