@@ -26,6 +26,12 @@ public class RpnPrinter implements Expr.Visitor<String> {
         return rpn(expr.right) + " " + expr.operator.lexeme;
     }
 
+    //
+    @Override
+    public String visitTernaryExpr(Expr.Ternary expr) {
+        return rpn(expr.condition) + ", " + rpn(expr.thenBranch) + ", " + rpn(expr.elseBranch) + " ?";
+    }
+
     private String rpn(Expr expr) {
         return expr.accept(this);
     }

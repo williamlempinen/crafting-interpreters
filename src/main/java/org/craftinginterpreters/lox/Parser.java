@@ -5,7 +5,9 @@ import java.util.List;
 import static org.craftinginterpreters.lox.TokenType.*;
 
 /*
-expression     → equality ;
+expression     → comma ;
+comma          → ternary ( "," ternary )*;
+ternary        → equality ? equality : ternary | equality;
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term           → factor ( ( "-" | "+" ) factor )* ;
@@ -16,6 +18,7 @@ unary          → ( "!" | "-" ) unary
 primary        → NUMBER | STRING | "true" | "false" | "nil"
                | "(" expression ")" ;
 * */
+
 public class Parser {
     private static class ParseError extends RuntimeException {}
     private final List<Token> tokens;
@@ -25,7 +28,7 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    Expr parse() {
+    public Expr parse() {
         try {
             return expression();
         } catch (ParseError error) {
@@ -34,7 +37,28 @@ public class Parser {
     }
 
     private Expr expression() {
-        return equality();
+        return comma();
+    }
+
+    private Expr comma() {
+        Expr expr = ternary();
+        while (match(COMMA)) {
+            Token operator = previous();
+            Expr right = ternary();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
+    }
+
+    private Expr ternary() {
+        Expr expr = equality();
+        if (match(QUESTION_MARK)) {
+            Expr thenBranch = equality();
+            consume(COLON, "Expect ':' after then branch of ternary expression.");
+            Expr elseBranch = ternary();
+            expr = new Expr.Ternary(expr, thenBranch, elseBranch);
+        }
+        return expr;
     }
 
     private Expr equality() {
