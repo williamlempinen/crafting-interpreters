@@ -5,6 +5,12 @@ public class RpnPrinter implements Expr.Visitor<String> {
         return expr.accept(this);
     }
 
+    //no impl
+    @Override
+    public String visitAssignExpr(Expr.Assign expr) {
+        return null;
+    }
+
     @Override
     public String visitBinaryExpr(Expr.Binary expr) {
         return rpn(expr.left) + " " + rpn(expr.right) + " " + expr.operator.lexeme;
@@ -30,6 +36,12 @@ public class RpnPrinter implements Expr.Visitor<String> {
     @Override
     public String visitTernaryExpr(Expr.Ternary expr) {
         return rpn(expr.condition) + ", " + rpn(expr.thenBranch) + ", " + rpn(expr.elseBranch) + " ?";
+    }
+
+    //won't be implemented
+    @Override
+    public String visitVariableExpr(Expr.Variable expr) {
+        return null;
     }
 
     private String rpn(Expr expr) {
