@@ -42,7 +42,7 @@ public class Lox {
         BufferedReader reader = new BufferedReader(input);
 
         for (;;) {
-            System.out.println("> ");
+            System.out.println(">>> ");
             String line = reader.readLine();
 
             if (line == null) {
