@@ -1,3 +1,15 @@
 print "one";
 print(12+30);
 print "OK";
+
+
+var a = 1;
+var b = 69;
+
+{
+    var a = a + 2;
+    print a;
+}
+
+print a;
+
