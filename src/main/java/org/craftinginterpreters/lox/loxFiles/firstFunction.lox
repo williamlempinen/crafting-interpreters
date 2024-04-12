@@ -1,0 +1,9 @@
+fun hello(max) {
+    var i = 0;
+    while (i < max) {
+        print i;
+        i = i + 1;
+    }
+}
+
+hello(10);
